@@ -1,0 +1,13 @@
+org-journal-list
+================
+
+A package to display sidebar, showing a list of org-notes with preview.
+
+Installation with use-package:
+
+    (use-package org-journal-list
+        :ensure t
+        :config
+        (setq org-journal-list-default-directory "~/notes/"))
+
+This will install org-journal-list and set ~/notes as a default journal directory.
