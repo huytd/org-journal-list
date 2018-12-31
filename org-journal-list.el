@@ -29,15 +29,18 @@
     (split-string (buffer-string) "\n" t)))
 
 (defun org-journal-list--read-first-few-lines (list)
+  "Read the first few lines of the documents as a given LIST."
   (cond ((>= (length list) 6) (subseq list 1 5))
         ((>= (length list) 1) (nthcdr 1 list))
         (t list)))
 
 (defun org-journal-list--read-journal-heads (path)
+  "Read the specific note at PATH as a list, returning the first few lines."
   (mapconcat (function (lambda (line) (format "  %s" line)))
              (org-journal-list--read-first-few-lines (org-journal-list--read-file path)) "\n"))
 
 (defun org-journal-list--start ()
+  "Start org-journal-list mode, this function should be binded to a keystroke."
   (interactive)
   ;(setq split-width-threshold 0)
   (setq journal-list-buffer (get-buffer-create (generate-new-buffer-name "*journals*")))
