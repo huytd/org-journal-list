@@ -3,6 +3,8 @@ org-journal-list
 
 A package to display sidebar, showing a list of org-notes with preview.
 
+For a preview, please see [screenshot.png].
+
 Installation with use-package:
 
     (use-package org-journal-list
