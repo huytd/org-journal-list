@@ -9,7 +9,7 @@
 
 ;;; Version: 1.0
 ;;; URL: https://github.com/huytd/org-journal-list
-;;; Package-Requires: ((emacs "24.3"))
+;;; Package-Requires: ((emacs "25"))
 
 ;;; Code:
 (require 'cl-extra)
@@ -37,10 +37,15 @@
   "Default suffix of your journal files."
   :type 'string)
 
+(defcustom org-journal-list-create-temp-buffer
+  nil
+  "Start journal list with a temp buffer instead of a prefixed file name."
+  :type 'boolean)
+
 (defun org-journal-list--read-file (path)
   "Read all org files in a given PATH."
   (with-temp-buffer
-    (insert-file-contents (concat org-journal-list-default-directory path))
+    (insert-file-contents path nil 0 256)
     (split-string (buffer-string) "\n" t)))
 
 (defun org-journal-list--read-first-few-lines (list)
@@ -54,14 +59,26 @@
   (mapconcat (function (lambda (line) (format "  %s" line)))
              (org-journal-list--read-first-few-lines (org-journal-list--read-file path)) "\n"))
 
+(defun org-journal-list--remove-default-directory-in-path (path)
+  "Remove the default directory in PATH when printing, if there is one."
+  (replace-regexp-in-string (regexp-quote org-journal-list-default-directory) "" path nil 'literal))
+
 (defun org-journal-list--format-item-string (item)
   "Generate the string for each ITEM on the sidebar."
-  (format "* [[file:%s%s][%s]]\n%s\n%s"
-          org-journal-list-default-directory
+  (format "* [[file:%s][%s]]\n%s\n%s"
           item
-          item
+          (org-journal-list--remove-default-directory-in-path item)
           (org-journal-list--read-journal-heads item)
           (make-string 35 ?━)))
+
+(defun org-journal-list--create-and-open-temp-buffer ()
+  "Create and open a new empty buffer."
+  (interactive)
+  (let ((temp-buffer (get-buffer-create "*new note*")))
+    (with-current-buffer temp-buffer
+      (org-mode)
+      (cd org-journal-list-default-directory)
+      (switch-to-buffer temp-buffer))))
 
 (defun org-journal-list--start ()
   "Start org-journal-list mode, this function should be binded to a keystroke."
@@ -69,12 +86,14 @@
   (let ((journal-list-buffer (get-buffer-create (generate-new-buffer-name "*journals*"))))
     (with-current-buffer journal-list-buffer
       (org-mode)
-      (let ((file-list (directory-files org-journal-list-default-directory nil "\\.org$")))
+      (let ((file-list (directory-files-recursively org-journal-list-default-directory "\\.org$" t)))
         (let ((file-list-text (mapcar 'org-journal-list--format-item-string file-list)))
           (insert (mapconcat 'identity file-list-text "\n"))
           (goto-char (point-min))
           (read-only-mode t))))
-    (find-file (concat org-journal-list-default-directory (format-time-string "%Y-%m-%d") org-journal-list-default-suffix))
+    (if org-journal-list-create-temp-buffer
+        (org-journal-list--create-and-open-temp-buffer)
+        (find-file (concat org-journal-list-default-directory (format-time-string "%Y-%m-%d") org-journal-list-default-suffix)))
     (display-buffer-in-side-window journal-list-buffer org-journal-list-display-alist)))
 
 (provide 'org-journal-list)

@@ -5,11 +5,55 @@ A package to display sidebar, showing a list of org-notes with preview.
 
 For a preview, please see [screenshot.png].
 
-Installation with use-package:
+Installation
+------------
+
+You can install with use-package, from MELPA:
 
     (use-package org-journal-list
         :ensure t
         :config
         (setq org-journal-list-default-directory "~/notes/"))
 
+Or checkout the code and install it locally:
+
+   (use-package org-journal-list
+       :load-path "~/your/local/path/to/this/package"
+       :config
+       (setq org-journal-list-default-directory "~/notes/"))
+
 This will install org-journal-list and set ~/notes as a default journal directory.
+
+Configurations
+--------------
+
+* Default directory:
+By default, it will be "~/notes/journal/". All of the *.org files in subdirectories
+will be listed as well. To change the default directory, you can change the
+org-journal-list-default-directory variable:
+
+   (setq org-journal-list-default-directory "/your/custom/path/")
+
+Please note that, if you use "~" as $HOME folder in your path, the full path will
+be displayed when the file list displayed. To omit the default path, use
+"/Users/<your-name>/" instead of "~" for $HOME.
+
+* Default note suffix:
+When you open journal list with org-journal-list--start, the new note buffer will
+be created with the name "dd-mm-yyyy.journal.org", you can change the ".journal.org"
+part by changing org-journal-list-default-suffix variable:
+
+   (setq org-journal-list-default-suffix ".org")
+
+But you can't change the "dd-mm-yyyy" part, this is intended to let you reopen the
+note of the same day at any point after the file created. If you have a different
+note-taking workflow, you can just change the new buffer creation behavior, see
+the next section.
+
+* Create empty buffer instead of a named one:
+By changing org-journal-list-create-temp-buffer to a non-nil value, you will have
+an empty org-mode buffer instead of a named one:
+
+   (setq org-journal-list-create-temp-buffer t)
+
+The default directory when you save the buffer will be your journal default directory.
