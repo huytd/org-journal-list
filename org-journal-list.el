@@ -1,15 +1,19 @@
-;;; org-journal-list.el --- Org mode Journal List
+;;; org-journal-list.el --- Org mode Journal List -*- lexical-binding: t -*-
+
+;; Copyright © 2011-2019 Huy Tran <huytd189@gmail.com>
+
+;; Author: Huy Tran <huytd189@gmail.com> 
+;; Version: 1.0
+;; URL: https://github.com/huytd/org-journal-list
+;; Package-Requires: ((emacs "25"))
 
 ;;; Commentary:
-;;;  This package does not provide any key binding. You will
-;;;  have to do it yourself.
-;;;  For example, to bind Super-J as a keystroke to open journal
-;;;  list, do this:
-;;;    (global-set-key (kbd "s-j") 'org-journal-list--start)
-
-;;; Version: 1.0
-;;; URL: https://github.com/huytd/org-journal-list
-;;; Package-Requires: ((emacs "25"))
+;;
+;; This package does not provide any key binding. You will
+;; have to do it yourself.
+;; For example, to bind Super-J as a keystroke to open journal
+;; list, do this:
+;;   (global-set-key (kbd "s-j") 'org-journal-list--start)
 
 ;;; Code:
 (require 'cl-extra)
@@ -17,7 +21,7 @@
 (defgroup org-journal-list nil
   "Customization group for org-journal-list."
   :prefix "org-journal-list-"
-  :group 'comint
+  :group 'org
   :link '(url-link :tag "GitHub" "https://github.com/huytd/org-journal-list"))
 
 (defcustom org-journal-list-display-alist
