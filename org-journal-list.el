@@ -46,6 +46,11 @@
   "Start journal list with a temp buffer instead of a prefixed file name."
   :type 'boolean)
 
+(defcustom org-journal-list-create-list-buffer
+  t
+  "Start journal list with a list of notes on the right."
+  :type 'boolean)
+
 (defun org-journal-list--read-file (path)
   "Read all org files in a given PATH."
   (with-temp-buffer
@@ -87,18 +92,19 @@
 (defun org-journal-list--start ()
   "Start org-journal-list mode, this function should be binded to a keystroke."
   (interactive)
-  (let ((journal-list-buffer (get-buffer-create (generate-new-buffer-name "*journals*"))))
-    (with-current-buffer journal-list-buffer
-      (org-mode)
-      (let ((file-list (directory-files-recursively org-journal-list-default-directory "\\.org$" t)))
-        (let ((file-list-text (mapcar 'org-journal-list--format-item-string file-list)))
-          (insert (mapconcat 'identity file-list-text "\n"))
-          (goto-char (point-min))
-          (read-only-mode t))))
-    (if org-journal-list-create-temp-buffer
-        (org-journal-list--create-and-open-temp-buffer)
-        (find-file (concat org-journal-list-default-directory (format-time-string "%Y-%m-%d") org-journal-list-default-suffix)))
-    (display-buffer-in-side-window journal-list-buffer org-journal-list-display-alist)))
+  (if org-journal-list-create-list-buffer
+      (let ((journal-list-buffer (get-buffer-create (generate-new-buffer-name "*journals*"))))
+        (with-current-buffer journal-list-buffer
+          (org-mode)
+          (let ((file-list (directory-files-recursively org-journal-list-default-directory "\\.org$" t)))
+            (let ((file-list-text (mapcar 'org-journal-list--format-item-string file-list)))
+              (insert (mapconcat 'identity file-list-text "\n"))
+              (goto-char (point-min))
+              (read-only-mode t))))
+        (display-buffer-in-side-window journal-list-buffer org-journal-list-display-alist)))
+  (if org-journal-list-create-temp-buffer
+      (org-journal-list--create-and-open-temp-buffer)
+    (find-file (concat org-journal-list-default-directory (format-time-string "%Y-%m-%d") org-journal-list-default-suffix))))
 
 (provide 'org-journal-list)
 ;;; org-journal-list.el ends here
